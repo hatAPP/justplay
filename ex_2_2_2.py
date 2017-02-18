@@ -17,7 +17,7 @@ class Spider:
 		return response.read().decode('gbk')
 	def getContents(self,pageIndex):
 		page = self.getPage(pageIndex)
-		pattern = re.compile('<div.*?class="list-item.*?<a.*?href="(.*?)".*?class="lady-avatar">.*?<img.*?src="(.*?)".*?<a.*?class="lady-name.*?>(.*?)</a>.*?<strong>(.*?)</strong>.*?<span>(.*?)</span>',re.S)
+		pattern = re.compile('<div.*?class="list-item.*?<a.*?class="lady-name".*?href="(.*?)".*?>.*?<img.*?src="(.*?)".*?<a.*?class="lady-name.*?>(.*?)</a>.*?<strong>(.*?)</strong>.*?<span>(.*?)</span>',re.S)
 		items = re.findall(pattern,page)
 		contents = []
 		for item in items:
@@ -26,17 +26,18 @@ class Spider:
 		#	print item[0],item[1],item[2],item[3],item[4]
 	def getDetailPage(self,infoURL):
 		infoURL = 'http:' + infoURL
+		print infoURL
 		response = urllib2.urlopen(infoURL)
 		return response.read().decode('gbk')
 	def getBrief(self,page):
-		print page
-		pattern = re.compile('<div.*?class="mm-p-info mm-p-base-info".*?>(.*?)<!--',re.S)
+	#	print page
+		pattern = re.compile('<div.*?class="mm-p-info.*?>(.*?)<!--',re.S)
 		result = re.search(pattern,page)
-		print result
+	#	print result
 		return self.tool.replace(result.group(1))
 	def getAllImg(self,page):
 		pattern = re.compile('<img.*?src="(.*?)"',re.S)
-		images = re.findall(patternImg,content.group(1))
+		images = re.findall(pattern,content.group(1))
 		return images
 	def saveImgs(self,images,name):
 		number = 1
@@ -82,7 +83,7 @@ class Spider:
 		for item in contents:
 			print u"发现一位模特，名字叫",item[2],u"芳龄",item[3],u"她在",item[4]
 			print u"正在偷偷地保存",item[2],"的信息"
-			print u"又意外地发现她的个人地址是",item[0]
+			print u"又意外地发现她的个人地址是http:",item[0]
 			detailURL = item[0]
 			detailPage = self.getDetailPage(detailURL)
 			brief = self.getBrief(detailPage)
